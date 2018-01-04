@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Basic Redux Implementation</title>
+</head>
+<body>
+    <h1>Basic Redux Implementation</h1>
+    <div>
+        Counter:<br/>
+        <span id="counter"></span>
+    </div>
+    <button id="incrementBtn">Increment</button>
+    <button id="decrementBtn">Decrement</button>
+
+    <script type="text/javascript">
+        let state = { counter: 3 };
+        let listeners = [];
+
+        function updateView() {
+        	document.querySelector('#counter').innerText = state.counter;
+        }
+
+        function subscribe(listener){
+        	listeners.push(listener);
+        }
+
+        function reducer(state, action){
+        	switch(action){
+                case 'INC':
+                	return { ...state, counter: state.counter + 1 };
+                case 'DEC':
+                	return { ...state, counter: state.counter - 1 };
+                default:
+                	return state;
+            }
+        }
+
+        function dispatch(action){
+	        console.log('action: ', action);
+
+	        const newState = reducer(state, action);
+
+	        if(newState !== state){
+	        	state = newState;
+	        	listeners.forEach(listener => listener());
+            }
+        }
+
+        function init(){
+        	updateView();
+	        subscribe(updateView);
+	        document.querySelector('#incrementBtn').onclick = () => dispatch('INC');
+	        document.querySelector('#decrementBtn').onclick = () => dispatch('DEC');
+        }
+
+        init();
+
+
+    </script>
+</body>
+</html>
